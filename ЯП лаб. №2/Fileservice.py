@@ -9,8 +9,9 @@ class Fileservice:
             self.counter += 1
             if id in self.data.keys():
                 continue
-            else:    
+            else:
                 self.data[id] = filename 
+                print(f'File path saved with id = {self.counter - 1}')
                 break
         return id
     
@@ -37,10 +38,13 @@ class Fileservice:
         return lst_of_paths
         
     def backup(self, data):
-        self.data = data
-        self.counter = max(data.keys())
-        
-
+        try:
+            self.data = data
+            self.counter = max(data.keys())
+            print('Backup successfull')
+        except:
+            print('Nothing to save')
+            
 def Help():
         print( '''
             save - Save filepath
@@ -52,18 +56,15 @@ def Help():
             quit - Shup down
         ''')
 
-def Navigate_menu(service : Fileservice):
+def Navigate_menu(service : Fileservice): 
     while True:
         usr_input = input('>').lower()
         if usr_input == 'save':
             service.save_file(input('Enter path\n'))
-            print(f'File path saved with id = {service.counter - 1}')
         elif usr_input == 'get':
-            print('Enter id')
-            print(service.get_file(int(int(input()))))
+            print(service.get_file(int(input('Enter id\n'))))
         elif usr_input == 'backup':
             service.backup(service.data)
-            print('backup successfull')
         elif usr_input == 'del':
             print(service.delete_file(int(input('Enter id\n'))))
         elif usr_input == 'change_id':
