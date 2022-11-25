@@ -29,6 +29,13 @@ class Fileservice:
         self.counter = old_id
         print(f'Changed id from {old_id} to {new_id}')
     
+    def get_list(self, lst_of_id):
+        lst_of_paths = []
+        for i in lst_of_id:
+            lst_of_paths.append(self.get_file(i))
+        
+        return lst_of_paths
+        
     def backup(self, data):
         self.data = data
         self.counter = max(data.keys())
@@ -61,6 +68,8 @@ def Navigate_menu(service : Fileservice):
             print(service.delete_file(int(input('Enter id\n'))))
         elif usr_input == 'change_id':
             service.change_id(int(input('Enter id of file you want to change: ')), int(input('Enter new id: ')))
+        elif usr_input == 'get_lst':
+            print(service.get_list([int(i) for i in input('Enter ids separated by space: ').split()]))
         elif usr_input == 'help':
             Help()
         elif usr_input == 'quit':
