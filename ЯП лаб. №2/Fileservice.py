@@ -1,3 +1,6 @@
+from functools import partial
+
+
 class Fileservice:
     def __init__(self):
         self.data = {}
@@ -59,25 +62,26 @@ def Help():
 def Navigate_menu(service : Fileservice): 
     while True:
         usr_input = input('>').lower()
-        if usr_input == 'save':
-            service.save_file(input('Enter path\n'))
-        elif usr_input == 'get':
-            print(service.get_file(int(input('Enter id\n'))))
-        elif usr_input == 'backup':
-            service.backup(service.data)
-        elif usr_input == 'del':
-            print(service.delete_file(int(input('Enter id\n'))))
-        elif usr_input == 'change_id':
-            service.change_id(int(input('Enter id of file you want to change: ')), int(input('Enter new id: ')))
-        elif usr_input == 'get_lst':
-            print(service.get_list([int(i) for i in input('Enter ids separated by space: ').split()]))
-        elif usr_input == 'help':
-            Help()
-        elif usr_input == 'quit':
-            break
-        else:
-            print('Invalid command, if you stuck use "help" to see list of commands')
-
+        match usr_input:
+            case 'save':
+                service.save_file(input('Enter path\n'))
+            case 'get':
+                print(service.get_file(int(input('Enter id\n'))))
+            case 'del':
+                print(service.delete_file(int(input("Enter id you'd like to delete\n"))))
+            case 'get_lst':
+                print(service.get_list([int(i) for i in input('Enter ids separated by space: ').split()]))
+            case 'change_id':
+                service.change_id(int(input('Enter id of file you want to change: ')), int(input('Enter new id: ')))
+            case 'backup':
+                service.backup(service.data)
+            case 'help':
+                Help()
+            case 'quit':
+                break
+            case _:
+                print('Invalid command, if you stuck use "help" to see list of commands')
+                
 def Main():
     print('Hello')
     Navigate_menu(service = Fileservice())
