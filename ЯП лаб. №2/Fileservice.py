@@ -22,16 +22,19 @@ class Fileservice:
         try:
             return self.data[id]
         except:
-            return 'File not found'
+            raise Exception('File not found')
         
     def delete_file(self, id):
-        self.data.pop(id)
-        self.counter = id
-        print(f'Successfully deleted file with id = {id}')
-        
+        try:
+            self.data.pop(id)
+            self.counter = id
+            print(f'Successfully deleted file with id = {id}')
+        except:
+            raise Exception('No such id')    
+
     def change_id(self, old_id, new_id):
-        self.data[new_id] = self.data.pop(old_id)
-        self.counter = old_id
+        self.data[new_id] = self.data[old_id]
+        self.delete_file(old_id)
         print(f'Changed id from {old_id} to {new_id}')
     
     def get_list(self, lst_of_id):
@@ -47,8 +50,21 @@ class Fileservice:
             save_file.write(str(data))
             print('Backup successfull')
         except:
-            print('Nothing to save')
-            
+            raise Exception('Nothing to save')
+    
+    def from_backup(self):
+        usr_input = input('Would you like to restore your last saved session session ? y/n\n')
+        if usr_input == 'y':
+            save_file = open('save_file.txt', 'r', encoding='utf-8')
+            try:
+                self.data = eval(save_file.read())
+            except:
+                raise Exception('No data / save file is missing')
+        elif usr_input == 'n':
+            return
+        else:
+            print('Invalid command try again')
+     
 def Help():
         return ( '''
             save - Save filepath
@@ -57,30 +73,17 @@ def Help():
             get_list - Get list of filepaths
             change_id - change id of filepath
             backup - Save progress between sessions
+            restore - Restore session from save file
             quit - Shup down
         ''')
 
 def Initialize():
-    
     if path.exists('save_file.txt'):
         pass
     else:
-        open('save_file.txt', 'w+', encoding='utf-8')
-    
-    while True:
-        usr_input = input('Would you like to restore your last saved session session ? y/n\n')
-        if usr_input == 'y':
-            save_file = open('save_file.txt', 'r', encoding='utf-8')
-            try:
-                data = eval(save_file.read())
-                return Fileservice(data)
-            except:
-                print('Seems like your save file is empty, creating new.....')
-                return Fileservice({})
-        elif usr_input == 'n':
-            return Fileservice({})
-        else:
-            print('Invalid command try again')
+        open('save_file.txt', 'w+', encoding='utf-8')   
+    return Fileservice({})
+
 
 def Navigate_menu(service : Fileservice): 
     while True:
@@ -92,12 +95,14 @@ def Navigate_menu(service : Fileservice):
                 print(service.get_file(int(input('Enter id\n'))))
             case 'del':
                 service.delete_file(int(input("Enter id you'd like to delete\n")))
-            case 'get_lst':
+            case 'get_list':
                 print(service.get_list([int(i) for i in input('Enter ids separated by space:\n').split()]))
             case 'change_id':
                 service.change_id(int(input('Enter id of file you want to change: ')), int(input('Enter new id: ')))
             case 'backup':
                 service.backup(service.data)
+            case 'restore':
+                service.from_backup()
             case 'help':
                 print(Help())
             case 'quit':
