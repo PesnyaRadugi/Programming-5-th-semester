@@ -10,9 +10,7 @@ class Fileservice:
         while True:
             id = self.counter
             self.counter += 1
-            if id in self.data.keys():
-                continue
-            else:
+            if id not in self.data.keys():
                 self.data[id] = filename 
                 print(f'File path saved with id = {self.counter - 1}')
                 break
@@ -53,17 +51,11 @@ class Fileservice:
             raise Exception('Nothing to save')
     
     def from_backup(self):
-        usr_input = input('Would you like to restore your last saved session session ? y/n\n')
-        if usr_input == 'y':
-            save_file = open('save_file.txt', 'r', encoding='utf-8')
-            try:
-                self.data = eval(save_file.read())
-            except:
-                raise Exception('No data / save file is missing')
-        elif usr_input == 'n':
-            return
-        else:
-            print('Invalid command try again')
+        save_file = open('save_file.txt', 'r', encoding='utf-8')
+        try:
+            self.data = eval(save_file.read())
+        except:
+            raise Exception('No data / save file is missing')
      
 def Help():
         return ( '''
@@ -111,7 +103,7 @@ def Navigate_menu(service : Fileservice):
                 print('Invalid command, if you stuck use "help" to see list of commands')
                 
 def Main():
-    print('Hello write "help" to see list of commands')
+    print('Hello! Write "help" to see list of commands')
     Navigate_menu(Initialize())
     
 if __name__ == '__main__':
